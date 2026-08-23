@@ -251,43 +251,35 @@ Large execution histories can therefore be processed continuously.
 
 # 8. Indexing Strategy
 
-The execution table requires an index supporting incremental extraction.
+The database uses indexes based on the main access patterns of the application and extraction process.
 
-Recommended index:
+| Index | Purpose |
+|---|---|
+| `idx_account_customer` — `account(customer_id)` | Quickly finds the account belonging to a customer. Useful because `customer_id` is a foreign key and PostgreSQL does not automatically index foreign keys. |
+| `idx_orders_account_time` — `order_history(account_id, time DESC)` | Efficiently retrieves an account's latest orders by supporting both filtering by account and ordering by time. |
+| `idx_orders_ticker` — `order_history(ticker_symbol)` | Helps retrieve orders for a particular instrument. Mainly useful for instrument-level searches and reporting. |
+| `idx_holdings_ticker` — `holdings(ticker_symbol)` | Helps find which accounts hold a particular instrument. Mainly useful for reporting or reverse lookups. |
+| `idx_execution_order` — `execution(order_id, executed_at DESC)` | Efficiently retrieves all executions belonging to a specific order, with the latest execution first. |
+| `idx_execution_incremental_extract` — `execution(executed_at, execution_id)` | Supports incremental extraction using the `(executed_at, execution_id)` watermark. `execution_id` provides a tie-breaker when multiple executions have the same timestamp. |
 
-```sql
-CREATE INDEX idx_execution_incremental_extract
-ON execution(executed_at, execution_id);
-```
-
-This allows the database to quickly find executions after the previous watermark.
-
-Without this index, the database may need to scan a large portion of historical execution data.
+Primary keys already create indexes automatically. Therefore, additional indexes are not required for primary-key columns such as `customer_id`, `account_id`, `ticker_symbol`, `order_id`, `execution_id`, and `idempotency_key`.
 
 ---
 
 # 9. Write Cost and Operational Complexity
 
-The incremental extraction index introduces additional write cost.
+Indexes improve read performance but introduce additional storage and write overhead. Every insert or update affecting an indexed column may also require the corresponding index to be updated.
 
-Every execution insert performs:
+The main costs are:
 
-1. Insert execution record.
-2. Update extraction index.
+- Additional storage
+- Slightly slower writes
+- Larger backups
+- Index maintenance
 
-The additional write cost is acceptable because execution records are append-heavy and extraction performance is important.
+The trade-off is intentional: the indexes reduce expensive table scans and improve frequently used application queries and incremental extraction.
 
-Operational costs include:
-
-* additional index storage
-* database maintenance
-* backup growth
-* watermark management
-* monitoring extraction failures
-
-The design intentionally trades a small increase in write cost for significantly better read and extraction performance.
-
----
+Indexes mainly used for reporting, such as `idx_orders_ticker` and `idx_holdings_ticker`, can be reconsidered if those queries are not frequently used.
 
 # 10. Partitioning Decision
 
