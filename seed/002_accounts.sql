@@ -5,55 +5,44 @@ INSERT INTO account (
     state,
     version
 ) VALUES
-    -- Normal active investor
     (
         'acct-001',
-        'cust-001',
+        '7f3a2b1c-8d4e-4f91-a6c2-5e8b9d0f1234',
         12500.0000,
         'active',
         5
     ),
-
-    -- Active account with almost no cash
     (
         'acct-002',
-        'cust-002',
+        'c92e6a47-31b8-4d05-b7f9-82a1e3c45678',
         0.0100,
         'active',
         8
     ),
-
-    -- Suspended account
     (
         'acct-003',
-        'cust-003',
+        '2d8f4c91-6a37-4be2-9c15-7f0a3b5e8246',
         7500.0000,
         'suspended',
         3
     ),
-
-    -- Closed account
     (
         'acct-004',
-        'cust-004',
+        'a51c7e39-2f84-46bd-8a06-d3e9b217c654',
         0.0000,
         'closed',
         6
     ),
-
-    -- Active account used for ETF trading
     (
         'acct-005',
-        'cust-005',
+        'e84b2d76-9c13-4fa5-b8e2-61d7c039a542',
         25000.0000,
         'active',
         12
     ),
-
-    -- Active account with no holdings
     (
         'acct-006',
-        'cust-006',
+        '4c9a1f63-7e25-48d0-a3b6-92f5e817c430',
         5000.0000,
         'active',
         1
