@@ -1,0 +1,8 @@
+requests
+pandas
+duckdb
+plotly
+python-dotenv
+
+[dev]
+pytest
