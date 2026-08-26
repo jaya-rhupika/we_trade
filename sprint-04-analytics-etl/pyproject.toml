@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sprint-04-analytics-etl"
+version = "0.1.0"
+description = "Analytics ETL pipeline for Sprint 4"
+requires-python = ">=3.10"
+dependencies = [
+    "requests",
+    "pandas",
+    "duckdb",
+    "plotly",
+    "python-dotenv",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
+[project.scripts]
+analytics-etl = "analytics_etl.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
