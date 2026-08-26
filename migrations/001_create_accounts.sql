@@ -5,7 +5,6 @@ CREATE TABLE account (
     balance DECIMAL(19, 4) NOT NULL DEFAULT 0,
     state account_state NOT NULL,
     version INT NOT NULL DEFAULT 1,
-);
 
     CONSTRAINT chk_account_balance
         CHECK (balance >= 0),
