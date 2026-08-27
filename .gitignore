@@ -3,3 +3,6 @@
 .venv
 .cache
 data/*.duckdb
+venv/
+data/
+artifacts/

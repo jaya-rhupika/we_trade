@@ -4,6 +4,7 @@ src/analytics_etl/extractTransformLoad/__main__.py
 src/analytics_etl/extractTransformLoad/candle_validator.py
 src/analytics_etl/extractTransformLoad/charts.py
 src/analytics_etl/extractTransformLoad/config.py
+src/analytics_etl/extractTransformLoad/duckdb_load.py
 src/analytics_etl/extractTransformLoad/extract.py
 src/analytics_etl/extractTransformLoad/http_errors.py
 src/analytics_etl/extractTransformLoad/load.py
