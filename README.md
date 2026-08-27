@@ -1,6 +1,4 @@
-<<<<<<< HEAD
-# we_trade
-=======
+
 # we_trade - capstone
 
 ## Symbol Universe
@@ -14,4 +12,4 @@ RELIANCE.NS — Reliance Industries Ltd. — NSE: Provides exposure to a large, 
 TATASTEEL.BO — Tata Steel Ltd. — BSE: Provides exposure to the steel/metals sector and ensures the universe includes a BSE instrument.
 
 The universe is intentionally limited to three symbols so that the project can produce three well-supported claims within the available time.
->>>>>>> 81b98e1f57903dda0c313187104996a83159a347
+
