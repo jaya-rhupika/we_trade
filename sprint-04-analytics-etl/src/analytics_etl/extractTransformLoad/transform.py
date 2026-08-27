@@ -4,7 +4,7 @@ from typing import Any
 
 import pandas as pd
 
-from analytics_etl.candle_validator import (
+from .candle_validator import (
     validate_candle
 )
 
