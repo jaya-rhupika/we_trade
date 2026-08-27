@@ -1,0 +1,18 @@
+{
+  "symbol": "TCS.NS",
+  "source": "upstream:yahoo",
+  "stale": false,
+  "quote": {
+    "symbol": "TCS.NS",
+    "price": 2247.8,
+    "bid": 2247.31,
+    "ask": 2248.29,
+    "spreadBps": 4.3163,
+    "currency": "INR",
+    "change": -22.2,
+    "changePercent": -0.9779735682819384,
+    "previousClose": 2270,
+    "asOf": "2026-08-27T06:44:48Z",
+    "marketState": "unknown"
+  }
+}
