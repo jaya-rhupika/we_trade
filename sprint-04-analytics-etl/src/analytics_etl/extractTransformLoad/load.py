@@ -1,49 +1,190 @@
 from pathlib import Path
+import logging
+
+import duckdb
 import pandas as pd
 
 
-OUTPUT_FILE = Path(
-    "data/processed/candles.csv"
+DATABASE_FILE = Path(
+    "data/analytics.duckdb"
 )
 
 
+logger = logging.getLogger(__name__)
 
-def load_csv(df: pd.DataFrame):
+
+def create_database():
+
+    DATABASE_FILE.parent.mkdir(
+        parents=True,
+        exist_ok=True
+    )
+
+    connection = duckdb.connect(
+        str(DATABASE_FILE)
+    )
+
+    logger.info(
+        "DATABASE_CONNECTED | destination=%s",
+        DATABASE_FILE
+    )
+
+    return connection
+
+
+def create_staging_schema(connection):
+
+    connection.execute(
+        """
+        CREATE SCHEMA IF NOT EXISTS staging
+        """
+    )
+
+    logger.info(
+        "STAGING_SCHEMA_READY"
+    )
+
+
+def load_to_duckdb(df: pd.DataFrame):
 
     """
-    Load transformed dataframe into CSV file.
+    Load transformed market data directly into DuckDB.
+
+    The transformed market data is stored in
+    staging.candles.
 
     Parameters:
         df (pd.DataFrame): Cleaned market data dataframe
     """
 
-
     if df.empty:
+
+        logger.error(
+            "LOAD_FAILED | reason=empty_dataframe"
+        )
+
         raise ValueError(
             "Cannot load empty dataframe"
         )
 
-
-    OUTPUT_FILE.parent.mkdir(
-        parents=True,
-        exist_ok=True
+    logger.info(
+        "LOAD_STARTED | rows=%s | destination=%s",
+        len(df),
+        DATABASE_FILE
     )
 
+    connection = None
 
-    df.to_csv(
-        OUTPUT_FILE,
-        index=False
-    )
+    try:
+
+        connection = create_database()
+
+        create_staging_schema(
+            connection
+        )
+
+        connection.register(
+            "transformed_candles",
+            df
+        )
+
+        connection.execute(
+            """
+            CREATE OR REPLACE TABLE staging.candles AS
+            SELECT *
+            FROM transformed_candles
+            """
+        )
+
+        connection.unregister(
+            "transformed_candles"
+        )
+
+        loaded_rows = connection.execute(
+            """
+            SELECT COUNT(*)
+            FROM staging.candles
+            """
+        ).fetchone()[0]
+
+        logger.info(
+            "LOAD_COMPLETED | rows=%s | destination=%s",
+            loaded_rows,
+            DATABASE_FILE
+        )
+
+    except Exception as error:
+
+        logger.error(
+            "LOAD_FAILED | reason=%s",
+            error
+        )
+
+        raise
+
+    finally:
+
+        if connection is not None:
+
+            connection.close()
+
+            logger.info(
+                "DATABASE_CONNECTION_CLOSED"
+            )
 
 
-    print(
-        f"Data loaded successfully into {OUTPUT_FILE}"
-    )
+def load_dim_account(connection, data=None):
 
+    """
+    Placeholder for loading DIM_ACCOUNT.
+
+    Account data will be loaded when the required
+    account source data becomes available.
+    """
+
+    pass
+
+
+def load_dim_instrument(connection, data=None):
+
+    """
+    Placeholder for loading DIM_INSTRUMENT.
+
+    Instrument data will be loaded when the required
+    instrument source data becomes available.
+    """
+
+    pass
+
+
+def load_dim_date(connection, data=None):
+
+    """
+    Placeholder for loading DIM_DATE.
+
+    Date dimension data will be loaded when the
+    required analytical source data becomes available.
+    """
+
+    pass
+
+
+def load_fact_trades(connection, data=None):
+
+    """
+    Placeholder for loading FACT_TRADES.
+
+    Trade data will be loaded after the required
+    account, instrument, date, and trade data
+    becomes available.
+    """
+
+    pass
 
 
 if __name__ == "__main__":
 
-    print(
-        "load.py is ready. Call load_csv(df) from pipeline.py"
+    logger.info(
+        "load.py is ready. "
+        "Use load_to_duckdb(df) from pipeline.py"
     )

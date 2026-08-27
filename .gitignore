@@ -1,1 +1,8 @@
 .env
+.env*
+.venv
+.cache
+data/*.duckdb
+venv/
+data/
+artifacts/

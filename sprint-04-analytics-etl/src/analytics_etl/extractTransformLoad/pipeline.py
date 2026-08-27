@@ -1,6 +1,6 @@
-from extract import extract
-from transform import clean_data
-from load import load_csv
+from .extract import extract
+from .transform import clean_data
+from .load import load_to_duckdb
 
 
 def run_pipeline():
@@ -19,7 +19,7 @@ def run_pipeline():
 
 
     # Load dataframe into CSV
-    load_csv(df)
+    load_to_duckdb(df)
 
 
     print(
