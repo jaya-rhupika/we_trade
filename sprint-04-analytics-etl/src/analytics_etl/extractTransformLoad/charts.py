@@ -1,233 +1,71 @@
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import pandas as pd
-import plotly.express as px
 
-
-INPUT_FILE = Path(
-    "data/processed/metrics.csv"
-)
-
-
-SUMMARY_FILE = Path(
-    "data/processed/summary_metrics.csv"
-)
-
-
-OUTPUT_DIR = Path(
-    "artefacts"
-)
-
-
-
-def create_charts():
-
-
-    OUTPUT_DIR.mkdir(
-        parents=True,
-        exist_ok=True
-    )
-
-
-    # Load metrics data
-    df = pd.read_csv(
-        INPUT_FILE
-    )
-
-
-    # Load summary metrics
-    summary = pd.read_csv(
-        SUMMARY_FILE
-    )
-
-
-    company_names = {
-
-        "INFY.NS":
-        "Infosys Ltd",
-
-        "RELIANCE.NS":
-        "Reliance Industries Ltd",
-
-        "TATASTEEL.BO":
-        "Tata Steel Ltd"
-
-    }
-
-
-    df["company"] = (
-        df["symbol"]
-        .map(company_names)
-    )
-
-
-    summary["company"] = (
-        summary["symbol"]
-        .map(company_names)
-    )
-
-
-    # Ensure chronological order
-    df["date"] = pd.to_datetime(
-        df["date"]
-    )
-
-
-    df = df.sort_values(
-        [
-            "company",
-            "date"
-        ]
-    )
-
-
-    # -------------------------------
-    # Chart 1:
-    # Daily trading volume trend
-    # -------------------------------
-
-    fig = px.line(
-
-        df,
-
-        x="date",
-
-        y="volume",
-
-        color="company",
-
-        title=
-        "Daily Trading Volume Comparison",
-
-        labels={
-
-            "date":
-            "Trading Date",
-
-            "volume":
-            "Shares Traded",
-
-            "company":
-            "Company"
-
-        }
-
-    )
-
-
-    fig.write_html(
-        OUTPUT_DIR / "chart_1.html"
-    )
-
-
-
-    # -------------------------------
-    # Chart 2:
-    # Closing price movement
-    # -------------------------------
-
-    fig = px.line(
-
-        df,
-
-        x="date",
-
-        y="close",
-
-        color="company",
-
-        title=
-        "Closing Price Movement During Selected Period",
-
-        labels={
-
-            "date":
-            "Trading Date",
-
-            "close":
-            "Closing Price (INR)",
-
-            "company":
-            "Company"
-
-        }
-
-    )
-
-
-    fig.write_html(
-        OUTPUT_DIR / "chart_2.html"
-    )
-
-
-
-    # -------------------------------
-    # Chart 3:
-    # Total traded value comparison
-    # -------------------------------
-
-    fig = px.bar(
-
-        summary,
-
-        x="company",
-
-        y="total_traded_value",
-
-        title=
-        "Total Traded Value Comparison",
-
-        labels={
-
-            "company":
-            "Company",
-
-            "total_traded_value":
-            "Total Traded Value (INR)"
-
-        }
-
-    )
-
-
-    fig.write_html(
-        OUTPUT_DIR / "chart_3.html"
-    )
-
-
-    print(
-        "Charts created successfully"
-    )
-
-
-    print(
-        f"Saved charts in {OUTPUT_DIR}"
-    )
-
+from .metrics import INPUT_FILE, date_range, load_processed_csv, summarize_by_company
+
+
+OUTPUT_DIR = Path(__file__).resolve().parents[3] / "charts"
+
+
+def _period(frame: pd.DataFrame) -> str:
+    start, end = date_range(frame)
+    return f"{start} to {end}"
+
+
+def create_charts(input_file: Path = INPUT_FILE, output_dir: Path = OUTPUT_DIR) -> list[Path]:
+    frame = load_processed_csv(input_file)
+    summary = summarize_by_company(frame)
+    period = _period(frame)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    paths: list[Path] = []
+
+    leader = summary.iloc[summary["total_volume"].argmax()]
+    total_volume = summary["total_volume"].sum()
+    volume_share = leader["total_volume"] / total_volume * 100
+    fig, axis = plt.subplots(figsize=(9, 6))
+    axis.bar(summary["company"], summary["total_volume"] / 1e9)
+    axis.set_title(f"{leader['company']} Recorded {volume_share:.2f}% of Total Traded Volume ({period})")
+    axis.set_xlabel("Company")
+    axis.set_ylabel("Total traded volume (billion shares)")
+    axis.tick_params(axis="x", rotation=15)
+    fig.tight_layout()
+    path = output_dir / "total_traded_volume_by_company.png"
+    fig.savefig(path, dpi=150)
+    plt.close(fig)
+    paths.append(path)
+
+    fig, axis = plt.subplots(figsize=(9, 6))
+    range_leader = summary.iloc[summary["average_intraday_range_pct"].argmax()]
+    axis.bar(summary["company"], summary["average_intraday_range_pct"])
+    axis.set_title(f"{range_leader['company']} Had the Highest Average Intraday Price Range ({period})")
+    axis.set_xlabel("Company")
+    axis.set_ylabel("Average intraday high-to-low range (% of closing price)")
+    axis.tick_params(axis="x", rotation=15)
+    fig.tight_layout()
+    path = output_dir / "average_intraday_range_by_company.png"
+    fig.savefig(path, dpi=150)
+    plt.close(fig)
+    paths.append(path)
+
+    summary["period_change_pct"] = (summary["end_close"] / summary["start_close"] - 1) * 100
+    change_leader = summary.iloc[summary["period_change_pct"].argmax()]
+    fig, axis = plt.subplots(figsize=(9, 6))
+    axis.bar(summary["company"], summary["period_change_pct"])
+    axis.set_title(f"{change_leader['company']} Had the Smallest Closing Price Decline ({period})")
+    axis.set_xlabel("Company")
+    axis.set_ylabel("Closing price change (%)")
+    axis.axhline(0, color="black", linewidth=0.8)
+    axis.tick_params(axis="x", rotation=15)
+    fig.tight_layout()
+    path = output_dir / "period_close_change_by_company.png"
+    fig.savefig(path, dpi=150)
+    plt.close(fig)
+    paths.append(path)
+    return paths
 
 
 if __name__ == "__main__":
-
-    create_charts()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    for chart_path in create_charts():
+        print(chart_path)

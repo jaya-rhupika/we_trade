@@ -11,7 +11,7 @@ load_dotenv()
 SYMBOLS = [
     "INFY.NS",
     "RELIANCE.NS",
-    "TATASTEEL.BO"
+    "HDFCBANK.NS"
 ]
 
 

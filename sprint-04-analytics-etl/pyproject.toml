@@ -12,6 +12,7 @@ dependencies = [
     "pandas",
     "duckdb",
     "plotly",
+    "matplotlib",
     "python-dotenv",
 ]
 

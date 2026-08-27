@@ -3,152 +3,47 @@ from pathlib import Path
 import pandas as pd
 
 
-INPUT_FILE = Path(
-    "data/processed/candles.csv"
-)
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
+INPUT_FILE = PROJECT_ROOT / "data" / "processed" / "candles.csv"
+
+COMPANY_NAMES = {
+    "INFY.NS": "Infosys",
+    "RELIANCE.NS": "Reliance Industries",
+    "HDFCBANK.NS": "HDFC Bank",
+}
 
 
-OUTPUT_FILE = Path(
-    "data/processed/metrics.csv"
-)
+def load_processed_csv(input_file: Path = INPUT_FILE) -> pd.DataFrame:
+    """Load processed candles; calculations accept a DataFrame separately."""
+    frame = pd.read_csv(input_file, parse_dates=["date"])
+    required = {"symbol", "date", "close", "volume"}
+    missing = required - set(frame.columns)
+    if missing:
+        raise ValueError(f"Processed CSV is missing columns: {sorted(missing)}")
+    frame["company"] = frame["symbol"].map(COMPANY_NAMES).fillna(frame["symbol"])
+    frame["traded_value"] = frame["close"] * frame["volume"]
+    frame["intraday_range_pct"] = (frame["high"] - frame["low"]) / frame["close"] * 100
+    return frame
 
 
-SUMMARY_FILE = Path(
-    "data/processed/summary_metrics.csv"
-)
-
-
-
-def calculate_metrics():
-
-    # Load cleaned candle data
-    df = pd.read_csv(
-        INPUT_FILE
-    )
-
-
-    if df.empty:
-        raise ValueError(
-            "Input candles.csv is empty"
-        )
-
-
-    # Convert date column
-    df["date"] = pd.to_datetime(
-        df["date"]
-    )
-
-
-    # Sort before calculating returns
-    df = df.sort_values(
-        [
-            "symbol",
-            "date"
-        ]
-    )
-
-
-    # Daily percentage return
-    df["daily_return"] = (
-        df.groupby("symbol")["close"]
-        .pct_change()
-        * 100
-    )
-
-
-    # Value traded each day
-    df["traded_value"] = (
-        df["close"]
-        *
-        df["volume"]
-    )
-
-
-    # Daily high-low movement
-    df["price_range"] = (
-        df["high"]
-        -
-        df["low"]
-    )
-
-
-    # Summary metrics per stock
-    summary = (
-        df.groupby("symbol")
+def summarize_by_company(frame: pd.DataFrame) -> pd.DataFrame:
+    """Calculate descriptive trading metrics from an already-loaded frame."""
+    ordered = frame.sort_values(["symbol", "date"])
+    return (
+        ordered.groupby(["symbol", "company"], as_index=False)
         .agg(
-            average_volume=(
-                "volume",
-                "mean"
-            ),
-
-            total_volume=(
-                "volume",
-                "sum"
-            ),
-
-            average_closing_price=(
-                "close",
-                "mean"
-            ),
-
-            highest_price=(
-                "high",
-                "max"
-            ),
-
-            lowest_price=(
-                "low",
-                "min"
-            ),
-
-            total_traded_value=(
-                "traded_value",
-                "sum"
-            ),
-
-            average_daily_return=(
-                "daily_return",
-                "mean"
-            )
+            trading_days=("date", "nunique"),
+            total_volume=("volume", "sum"),
+            total_traded_value=("traded_value", "sum"),
+            average_traded_value=("traded_value", "mean"),
+            average_intraday_range_pct=("intraday_range_pct", "mean"),
+            start_close=("close", "first"),
+            end_close=("close", "last"),
         )
-        .reset_index()
+        .sort_values("total_traded_value", ascending=False)
+        .reset_index(drop=True)
     )
 
 
-    # Create output folder
-    OUTPUT_FILE.parent.mkdir(
-        parents=True,
-        exist_ok=True
-    )
-
-
-    # Save row-level metrics
-    df.to_csv(
-        OUTPUT_FILE,
-        index=False
-    )
-
-
-    # Save summary metrics
-    summary.to_csv(
-        SUMMARY_FILE,
-        index=False
-    )
-
-
-    print(
-        "Metrics calculated successfully"
-    )
-
-
-    print(
-        "\nSummary:"
-    )
-
-    print(summary)
-
-
-
-if __name__ == "__main__":
-
-    calculate_metrics()
+def date_range(frame: pd.DataFrame) -> tuple[str, str]:
+    return frame["date"].min().strftime("%Y-%m-%d"), frame["date"].max().strftime("%Y-%m-%d")

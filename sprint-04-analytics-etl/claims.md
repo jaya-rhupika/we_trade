@@ -1,42 +1,25 @@
 # Claims
 
-Three claims, minimum. One row each. Replace every CHANGE_ME.
+The findings below use only `data/processed/candles.csv`.
 
-A claim is a sentence about the business that could turn out to be wrong. It
-names what is true, of what, over what period, and with what magnitude. It is
-not a description of a chart, and it is not a question. If a reader can
-disagree with it, it is a claim. See the sprint README for the worked example.
+Analysis period:
+2025-08-28 to 2026-08-27.
 
-The chart artefact is the path to the file holding the chart that supports the
-claim, relative to this folder. Where one file holds several charts, point at
-the chart inside it with a fragment, and the file has to be committed either
-way.
+Selected universe:
+- HDFC Bank (HDFCBANK.NS)
+- Reliance Industries (RELIANCE.NS)
+- Infosys (INFY.NS)
+
+Traded value is calculated as closing price times traded volume.
 
 | # | Claim | Chart artefact |
 |---|---|---|
-| 1 | CHANGE_ME | CHANGE_ME |
-| 2 | CHANGE_ME | CHANGE_ME |
-| 3 | CHANGE_ME | CHANGE_ME |
-
-Filled in, a row looks like this. The claim is invented and out of domain
-deliberately, so that copying it gets you nothing. It is numbered `x` rather
-than with a digit so that nobody mistakes it for one of yours:
-
-| x | Complaints about the mid-range laptop range doubled in the month after the March firmware update and have not fallen back since. | report.html#laptop-complaints |
-
-Add rows past the third if you have more, numbered in sequence. Every artefact
-named in this table has to exist in the repository. Whether the claim is true,
-whether the chart supports it, and whether a non-technical reader can read the
-chart
-unaided are assessed by your instructor.
+| 1 | From 2025-08-28 to 2026-08-27, HDFC Bank recorded 7,510,116,886 traded shares, representing 55.07% of the total traded shares across the selected companies. | `charts/total_traded_volume_by_company.png` |
+| 2 | From 2025-08-28 to 2026-08-27, Infosys recorded the highest average intraday price range at 2.19%, compared with HDFC Bank at 1.69% and Reliance Industries at 1.70%. | `charts/average_intraday_range_by_company.png` |
+| 3 | From 2025-08-28 to 2026-08-27, Reliance Industries had the smallest closing price decline among the selected companies, decreasing 5.37% from INR 1,385.90 to INR 1,311.42. | `charts/period_close_change_by_company.png` |
 
 ## Notes
 
-Use this space for anything a reviewer needs in order to trust the numbers:
-the date range you pulled, the symbols in scope, what your transform did with
-the rows it rejected, and any claim you started to make and then withdrew
-because the data did not support it. A withdrawn claim with its reasoning is
-worth more in the review than a fourth weak claim.
+Prices are supplied analytical data and are not presented as real-world market
+conclusions.
 
-Say here how a teammate runs your pipeline, whether that is a console script
-declared in your packaging metadata or a module with a `__main__` block.

@@ -7,6 +7,7 @@ Requires-Dist: requests
 Requires-Dist: pandas
 Requires-Dist: duckdb
 Requires-Dist: plotly
+Requires-Dist: matplotlib
 Requires-Dist: python-dotenv
 Provides-Extra: dev
 Requires-Dist: pytest; extra == "dev"
