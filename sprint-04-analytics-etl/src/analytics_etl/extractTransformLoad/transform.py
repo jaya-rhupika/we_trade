@@ -6,6 +6,10 @@ from typing import Any
 
 import pandas as pd
 
+from .candle_validator import (
+    validate_candle
+)
+
 
 RAW_FILE = Path("data/raw/fauxnance.json")
 NUMERIC_FIELDS = ("open", "high", "low", "close", "adjclose", "volume")
