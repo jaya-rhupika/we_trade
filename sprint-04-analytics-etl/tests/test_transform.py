@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-from analytics_etl.transform import transform
-
-
-def test_transform_is_importable():
-    assert callable(transform)
-=======
-
-
 import json
 from pathlib import Path
 from typing import Any
@@ -116,4 +107,3 @@ def test_empty_candles_response_produces_empty_valid_dataset():
 
     assert _valid_rows(result) == []
     assert _rejected_rows(result) == []
->>>>>>> 81b98e1f57903dda0c313187104996a83159a347

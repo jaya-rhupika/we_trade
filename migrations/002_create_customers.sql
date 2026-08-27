@@ -1,9 +1,9 @@
 CREATE TABLE customer (
-    customer_id UUID PRIMARY KEY,
-    name VARCHAR(255),
-    dob DATE,
-    email VARCHAR(255),
-    password_hashed VARCHAR(255)
+    customer_id VARCHAR(255) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    dob DATE NOT NULL,
+    email VARCHAR(320) NOT NULL UNIQUE,
+    password_hashed VARCHAR(255) NOT NULL
 );
 
 ALTER TABLE account

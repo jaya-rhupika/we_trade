@@ -18,7 +18,7 @@ create table customer (
 
 -- 2. account table
 create table account (
-    account_id int ,
+    account_id STRING ,
     customer_id UUID not null,
     balance decimal(15, 2) not null default 0.00,
     state account_state not null,
