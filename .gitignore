@@ -2,6 +2,7 @@
 .env*
 .venv
 .cache
+.cache/
 data/*.duckdb
 venv/
 data/
