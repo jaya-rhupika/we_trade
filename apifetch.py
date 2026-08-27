@@ -207,4 +207,5 @@ candles = fetch_candles(
     "1d"
 )
 
-print(json.dumps(candles, indent=2))
+print(json.dumps(candles, indent=2)) 
+
