@@ -8,39 +8,41 @@ INPUT_FILE = Path(
     "data/processed/metrics.csv"
 )
 
-
 SUMMARY_FILE = Path(
     "data/processed/summary_metrics.csv"
 )
-
 
 OUTPUT_DIR = Path(
     "artefacts"
 )
 
 
-
 def create_charts():
 
-
+    # Create output directory
     OUTPUT_DIR.mkdir(
         parents=True,
         exist_ok=True
     )
 
 
-    # Load metrics data
+    # Load data
     df = pd.read_csv(
         INPUT_FILE
     )
 
-
-    # Load summary metrics
     summary = pd.read_csv(
         SUMMARY_FILE
     )
 
 
+    if df.empty:
+        raise ValueError(
+            "metrics.csv is empty"
+        )
+
+
+    # Company name mapping
     company_names = {
 
         "INFY.NS":
@@ -67,12 +69,13 @@ def create_charts():
     )
 
 
-    # Ensure chronological order
+    # Convert date to datetime
     df["date"] = pd.to_datetime(
         df["date"]
     )
 
 
+    # Sort data chronologically
     df = df.sort_values(
         [
             "company",
@@ -81,10 +84,10 @@ def create_charts():
     )
 
 
-    # -------------------------------
-    # Chart 1:
-    # Daily trading volume trend
-    # -------------------------------
+    # =====================================================
+    # CHART 1
+    # Daily Trading Volume
+    # =====================================================
 
     fig = px.line(
 
@@ -95,6 +98,8 @@ def create_charts():
         y="volume",
 
         color="company",
+
+        markers=True,
 
         title=
         "Daily Trading Volume Comparison",
@@ -110,7 +115,35 @@ def create_charts():
             "company":
             "Company"
 
+        },
+
+        hover_data={
+            "symbol": True,
+            "volume": ":,.0f",
+            "date": "|%d %b %Y"
         }
+
+    )
+
+
+    fig.update_traces(
+        marker=dict(
+            size=7
+        )
+    )
+
+
+    fig.update_layout(
+
+        xaxis_title="Trading Date",
+
+        yaxis_title="Shares Traded",
+
+        legend_title="Company",
+
+        hovermode="x unified",
+
+        template="plotly_white"
 
     )
 
@@ -120,11 +153,10 @@ def create_charts():
     )
 
 
-
-    # -------------------------------
-    # Chart 2:
-    # Closing price movement
-    # -------------------------------
+    # =====================================================
+    # CHART 2
+    # Closing Price
+    # =====================================================
 
     fig = px.line(
 
@@ -136,8 +168,10 @@ def create_charts():
 
         color="company",
 
+        markers=True,
+
         title=
-        "Closing Price Movement During Selected Period",
+        "Closing Price Movement During July 2026",
 
         labels={
 
@@ -150,7 +184,35 @@ def create_charts():
             "company":
             "Company"
 
+        },
+
+        hover_data={
+            "symbol": True,
+            "close": ":.2f",
+            "date": "|%d %b %Y"
         }
+
+    )
+
+
+    fig.update_traces(
+        marker=dict(
+            size=7
+        )
+    )
+
+
+    fig.update_layout(
+
+        xaxis_title="Trading Date",
+
+        yaxis_title="Closing Price (INR)",
+
+        legend_title="Company",
+
+        hovermode="x unified",
+
+        template="plotly_white"
 
     )
 
@@ -160,11 +222,10 @@ def create_charts():
     )
 
 
-
-    # -------------------------------
-    # Chart 3:
-    # Total traded value comparison
-    # -------------------------------
+    # =====================================================
+    # CHART 3
+    # Total Traded Value
+    # =====================================================
 
     fig = px.bar(
 
@@ -185,7 +246,38 @@ def create_charts():
             "total_traded_value":
             "Total Traded Value (INR)"
 
-        }
+        },
+
+        text="total_traded_value"
+
+    )
+
+
+    fig.update_traces(
+
+        texttemplate="%{text:,.0f}",
+
+        textposition="outside",
+
+        hovertemplate=
+        "<b>%{x}</b><br>"
+        "Total Traded Value: ₹%{y:,.0f}"
+        "<extra></extra>"
+
+    )
+
+
+    fig.update_layout(
+
+        xaxis_title="Company",
+
+        yaxis_title="Total Traded Value (INR)",
+
+        template="plotly_white",
+
+        uniformtext_minsize=8,
+
+        uniformtext_mode="hide"
 
     )
 
@@ -196,38 +288,14 @@ def create_charts():
 
 
     print(
-        "Charts created successfully"
+        "Charts created successfully."
     )
-
 
     print(
-        f"Saved charts in {OUTPUT_DIR}"
+        f"Charts saved to: {OUTPUT_DIR}"
     )
-
 
 
 if __name__ == "__main__":
 
     create_charts()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
