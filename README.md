@@ -1,17 +1,23 @@
-<<<<<<< HEAD
-# we_trade
-=======
+
 # we_trade - capstone
 
 ## Symbol Universe
 
-The analysis uses three Indian equity instruments:
+The five symbols were selected to provide a diverse and analytically useful dataset covering both Indian and US equity markets.
 
-INFY.NS — Infosys Ltd. — NSE: Provides exposure to India's IT/services sector and is a widely followed listed company.
+**RELIANCE.NS – Reliance Industries:**
+Reliance Industries was selected as a major Indian large-cap company with significant market activity and a diversified business across areas such as energy, telecommunications and retail. It provides a strong representation of the Indian market and is useful for analysing price movements, trading volume and traded value.
 
-RELIANCE.NS — Reliance Industries Ltd. — NSE: Provides exposure to a large, diversified Indian business and offers a useful comparison with Infosys.
+**INFY.NS – Infosys:**
+Infosys was selected to represent the Indian information technology sector. It is a well-established and actively traded company, making it suitable for analysing historical price and volume data. Its inclusion also allows comparison between the IT sector and other Indian sectors.
 
-TATASTEEL.BO — Tata Steel Ltd. — BSE: Provides exposure to the steel/metals sector and ensures the universe includes a BSE instrument.
+**HDFCBANK.NS – HDFC Bank:**
+HDFC Bank was selected to represent India's banking and financial-services sector. Including a major bank adds sector diversity to the dataset and allows comparisons between financial services, IT and diversified businesses within the Indian market.
 
-The universe is intentionally limited to three symbols so that the project can produce three well-supported claims within the available time.
->>>>>>> 81b98e1f57903dda0c313187104996a83159a347
+**AAPL – Apple:**
+Apple was selected as a major US technology company with extensive historical market data and high trading activity. It provides a useful US-market comparison against the three Indian companies and allows analysis of price performance, volume and traded value.
+
+**NVDA – NVIDIA:**
+NVIDIA was selected to represent the US semiconductor and artificial-intelligence sector. Its business differs from Apple's despite both being technology-related companies, providing an interesting comparison of price movements, trading volume and volatility within the US market.
+
+**Overall, these five symbols were chosen because they provide coverage of two markets, multiple sectors and established, actively traded companies. This makes the dataset suitable for analysing daily returns, trading volume, traded value, price ranges, price performance and differences between Indian and US equities.**
