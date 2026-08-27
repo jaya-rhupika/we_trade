@@ -39,6 +39,15 @@ class ConnectionFailed(Exception):
         self.retry_count = retry_count
 
 
+class InvalidResponse(Exception):
+    """Raised when a successful HTTP response is not valid JSON."""
+
+    def __init__(self, symbol: str, reason: str) -> None:
+        super().__init__(f"Invalid response for {symbol}: {reason}")
+        self.symbol = symbol
+        self.reason = reason
+
+
 def fetch_with_retry(
     url: str,
     api_key: str,
@@ -123,7 +132,15 @@ def fetch_with_retry(
                     len(response.content),
                 )
 
-                return response.json()
+                try:
+                    return response.json()
+                except requests.exceptions.JSONDecodeError as exc:
+                    logger.warning(
+                        "INVALID_RESPONSE | symbol=%s | status=200 | "
+                        "reason=non_json_body | action=skip_symbol",
+                        symbol,
+                    )
+                    raise InvalidResponse(symbol, "response body is not JSON") from exc
 
             # ---------------------------------------------------------
             # 5xx: server-side failure.

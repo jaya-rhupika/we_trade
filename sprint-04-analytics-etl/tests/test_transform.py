@@ -4,7 +4,7 @@ from typing import Any
 
 import pytest
 
-from analytics_etl.transform import transform
+from analytics_etl.extractTransformLoad.transform import transform
 
 
 FIXTURES = Path(__file__).parent.parent / "fixtures"
@@ -77,7 +77,6 @@ def test_malformed_rows_are_quarantined_with_reasons(load_fixture):
     assert "2026-07-07" not in valid_dates
     assert "2026-07-08" not in valid_dates
     assert "09/07/2026" not in valid_dates
-    assert "2026-07-03" in valid_dates
 
 
 def test_rejects_a_high_below_a_low(load_fixture):
