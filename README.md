@@ -11,7 +11,7 @@ Reliance Industries was selected as a major Indian large-cap company with signif
 **INFY.NS – Infosys:**
 Infosys was selected to represent the Indian information technology sector. It is a well-established and actively traded company, making it suitable for analysing historical price and volume data. Its inclusion also allows comparison between the IT sector and other Indian sectors.
 
-**HDFCBANK.BO – HDFC Bank:**
+**HDFCBANK.NS – HDFC Bank:**
 HDFC Bank was selected to represent India's banking and financial-services sector. Including a major bank adds sector diversity to the dataset and allows comparisons between financial services, IT and diversified businesses within the Indian market.
 
 **AAPL – Apple:**
