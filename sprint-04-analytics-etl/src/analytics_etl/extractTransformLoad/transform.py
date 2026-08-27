@@ -1,123 +1,16 @@
 import json
 from pathlib import Path
-from datetime import datetime
 
 import pandas as pd
+
+from candle_validator import (
+    validate_candle
+)
 
 
 RAW_FILE = Path(
     "data/raw/fauxnance.json"
 )
-
-
-NUMERIC_FIELDS = [
-    "open",
-    "high",
-    "low",
-    "close",
-    "adjclose",
-    "volume"
-]
-
-
-
-def parse_date(value):
-
-    if value is None:
-        return None
-
-
-    formats = [
-        "%Y-%m-%d",
-        "%d/%m/%Y",
-        "%Y-%m-%dT%H:%M:%S"
-    ]
-
-
-    for fmt in formats:
-
-        try:
-
-            return datetime.strptime(
-                value,
-                fmt
-            ).strftime(
-                "%Y-%m-%d"
-            )
-
-        except ValueError:
-            continue
-
-
-    return None
-
-
-
-
-def is_number(value):
-
-    return isinstance(
-        value,
-        (int, float)
-    )
-
-
-
-
-def validate_candle(candle):
-
-
-    if candle.get("close") is None:
-
-        return False, "missing_close"
-
-
-
-    for field in NUMERIC_FIELDS:
-
-        if field in candle:
-
-            if not is_number(
-                candle[field]
-            ):
-
-                return False, f"invalid_{field}"
-
-
-
-    if (
-        "high" in candle
-        and "low" in candle
-    ):
-
-        if candle["high"] < candle["low"]:
-
-            return False, "high_less_than_low"
-
-
-
-    if (
-        "volume" in candle
-        and candle["volume"] < 0
-    ):
-
-        return False, "negative_volume"
-
-
-
-    date = parse_date(
-        candle.get("date")
-    )
-
-
-    if date is None:
-
-        return False, "invalid_date"
-
-
-
-    return True, date
-
 
 
 
