@@ -1,0 +1,65 @@
+{
+  "data": {
+    "quotes": [
+      {
+        "symbol": "TATASTEEL.NS",
+        "source": "cache",
+        "stale": false,
+        "quote": {
+          "symbol": "TATASTEEL.NS",
+          "price": 189.72,
+          "bid": 189.57,
+          "ask": 189.87,
+          "spreadBps": 15,
+          "currency": "INR",
+          "change": 1.71,
+          "changePercent": 0.9095260890378172,
+          "previousClose": 188.01,
+          "asOf": "2026-08-27T04:14:02Z",
+          "marketState": "unknown"
+        }
+      },
+      {
+        "symbol": "TCS.NS",
+        "source": "cache",
+        "stale": false,
+        "quote": {
+          "symbol": "TCS.NS",
+          "price": 2258.8,
+          "bid": 2258.31,
+          "ask": 2259.29,
+          "spreadBps": 4.3163,
+          "currency": "INR",
+          "change": -11.2,
+          "changePercent": -0.4933920704845815,
+          "previousClose": 2270,
+          "asOf": "2026-08-27T04:14:00Z",
+          "marketState": "unknown"
+        }
+      },
+      {
+        "symbol": "INFY.NS",
+        "source": "upstream:yahoo",
+        "stale": false,
+        "quote": {
+          "symbol": "INFY.NS",
+          "price": 1118.3,
+          "bid": 1118.04,
+          "ask": 1118.56,
+          "spreadBps": 4.4903,
+          "currency": "INR",
+          "change": -1.7,
+          "changePercent": -0.15178571428571427,
+          "previousClose": 1120,
+          "asOf": "2026-08-27T04:14:00Z",
+          "marketState": "unknown"
+        }
+      }
+    ]
+  },
+  "meta": {
+    "asOf": "2026-08-27T04:16:58.392300Z",
+    "disclaimer": "Educational data. Not for investment use.",
+    "spreadSource": "modelled"
+  }
+}
