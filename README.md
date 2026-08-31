@@ -23,6 +23,15 @@ print(con.sql('SELECT COUNT(*) FROM staging.candles'))
 con.close()
 "
 ```
+
+## Command to view the duckdb ui
+
+# From sprint-04-analytics-etl/
+python -c "import duckdb; con=duckdb.connect('data/analytics.duckdb'); con.execute('CALL start_ui()'); input('Press Enter to stop...')"
+
+## Date Range
+Add date range in the .env file 
+
 ## Symbol Universe
 
 The five symbols were selected to provide a diverse and analytically useful dataset covering both Indian and US equity markets.
