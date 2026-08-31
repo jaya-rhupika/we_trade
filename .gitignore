@@ -1,0 +1,39 @@
+# Environment
+.env
+.env*
+
+# Virtual environments
+.venv
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+
+# Data files — never commit generated or downloaded data
+data/
+data/raw/
+data/processed/
+data/*.duckdb
+
+# Cache
+.cache
+.cache/
+
+# Artifacts / outputs
+artifacts/
+charts/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
