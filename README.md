@@ -8,7 +8,8 @@ cd sprint-04-analytics-etl
 pip install -e .
 python -m analytics_etl.extractTransformLoad.pipeline
 ```
-##Command to check if rows are loaded to duckdb
+
+## Command to check if rows are loaded to duckdb
 ```bash
 # install duckdb cli if you don't have it
 pip install duckdb
