@@ -1,154 +1,59 @@
 from pathlib import Path
 
+import duckdb
 import pandas as pd
 
 
-INPUT_FILE = Path(
-    "data/processed/candles.csv"
-)
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
+DATABASE_FILE = PROJECT_ROOT / "data" / "analytics.duckdb"
+
+COMPANY_NAMES = {
+    "INFY.NS": "Infosys",
+    "RELIANCE.NS": "Reliance Industries",
+    "HDFCBANK.NS": "HDFC Bank",
+    "AAPL": "Apple",
+    "NVDA": "NVIDIA",
+}
 
 
-OUTPUT_FILE = Path(
-    "data/processed/metrics.csv"
-)
+def load_processed_duckdb(database_file: Path = DATABASE_FILE) -> pd.DataFrame:
+    """Read staging candles from DuckDB and derive reusable row metrics."""
+    connection = duckdb.connect(str(database_file), read_only=True)
+    try:
+        frame = connection.execute("SELECT * FROM staging.candles").df()
+    finally:
+        connection.close()
+    frame["date"] = pd.to_datetime(frame["date"])
+    required = {"symbol", "date", "high", "low", "close", "volume"}
+    missing = required - set(frame.columns)
+    if missing:
+        raise ValueError(f"DuckDB staging.candles is missing columns: {sorted(missing)}")
+    frame["company"] = frame["symbol"].map(COMPANY_NAMES).fillna(frame["symbol"])
+    frame["intraday_range_pct"] = (frame["high"] - frame["low"]) / frame["close"] * 100
+    frame["previous_close"] = frame.groupby("symbol")["close"].shift(1)
+    frame["daily_return_pct"] = (frame["close"] / frame["previous_close"] - 1) * 100
+    return frame
 
 
-SUMMARY_FILE = Path(
-    "data/processed/summary_metrics.csv"
-)
-
-
-
-def calculate_metrics():
-
-    # Load cleaned candle data
-    df = pd.read_csv(
-        INPUT_FILE
-    )
-
-
-    if df.empty:
-        raise ValueError(
-            "Input candles.csv is empty"
-        )
-
-
-    # Convert date column
-    df["date"] = pd.to_datetime(
-        df["date"]
-    )
-
-
-    # Sort before calculating returns
-    df = df.sort_values(
-        [
-            "symbol",
-            "date"
-        ]
-    )
-
-
-    # Daily percentage return
-    df["daily_return"] = (
-        df.groupby("symbol")["close"]
-        .pct_change()
-        * 100
-    )
-
-
-    # Value traded each day
-    df["traded_value"] = (
-        df["close"]
-        *
-        df["volume"]
-    )
-
-
-    # Daily high-low movement
-    df["price_range"] = (
-        df["high"]
-        -
-        df["low"]
-    )
-
-
-    # Summary metrics per stock
+def summarize_by_company(frame: pd.DataFrame) -> pd.DataFrame:
+    """Calculate distinct descriptive metrics from an already-loaded frame."""
+    ordered = frame.sort_values(["symbol", "date"])
     summary = (
-        df.groupby("symbol")
+        ordered.groupby(["symbol", "company"], as_index=False)
         .agg(
-            average_volume=(
-                "volume",
-                "mean"
-            ),
-
-            total_volume=(
-                "volume",
-                "sum"
-            ),
-
-            average_closing_price=(
-                "close",
-                "mean"
-            ),
-
-            highest_price=(
-                "high",
-                "max"
-            ),
-
-            lowest_price=(
-                "low",
-                "min"
-            ),
-
-            total_traded_value=(
-                "traded_value",
-                "sum"
-            ),
-
-            average_daily_return=(
-                "daily_return",
-                "mean"
-            )
+            trading_days=("date", "nunique"),
+            total_volume=("volume", "sum"),
+            average_volume=("volume", "mean"),
+            average_intraday_range_pct=("intraday_range_pct", "mean"),
+            daily_return_volatility=("daily_return_pct", "std"),
+            positive_close_days=("daily_return_pct", lambda values: (values > 0).sum()),
+            start_close=("close", "first"),
+            end_close=("close", "last"),
         )
-        .reset_index()
     )
+    summary["period_change_pct"] = (summary["end_close"] / summary["start_close"] - 1) * 100
+    return summary.reset_index(drop=True)
 
 
-    # Create output folder
-    OUTPUT_FILE.parent.mkdir(
-        parents=True,
-        exist_ok=True
-    )
-
-
-    # Save row-level metrics
-    df.to_csv(
-        OUTPUT_FILE,
-        index=False
-    )
-
-
-    # Save summary metrics
-    summary.to_csv(
-        SUMMARY_FILE,
-        index=False
-    )
-
-
-    print(
-        "Metrics calculated successfully"
-    )
-
-
-    print(
-        "\nSummary:"
-    )
-
-    print(summary)
-
-
-
-if __name__ == "__main__":
-
-    calculate_metrics()
+def date_range(frame: pd.DataFrame) -> tuple[str, str]:
+    return frame["date"].min().strftime("%Y-%m-%d"), frame["date"].max().strftime("%Y-%m-%d")
