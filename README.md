@@ -8,7 +8,20 @@ cd sprint-04-analytics-etl
 pip install -e .
 python -m analytics_etl.extractTransformLoad.pipeline
 ```
+##Command to check if rows are loaded to duckdb
+```bash
+# install duckdb cli if you don't have it
+pip install duckdb
 
+# then from sprint-04-analytics-etl/
+python -c "
+import duckdb
+con = duckdb.connect('data/analytics.duckdb')
+print(con.sql('SELECT * FROM staging.candles LIMIT 10'))
+print(con.sql('SELECT COUNT(*) FROM staging.candles'))
+con.close()
+"
+```
 ## Symbol Universe
 
 The five symbols were selected to provide a diverse and analytically useful dataset covering both Indian and US equity markets.
