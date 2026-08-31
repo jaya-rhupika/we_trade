@@ -1,4 +1,3 @@
-
 # we_trade - capstone
 
 ## Command to Run the Pipeline
