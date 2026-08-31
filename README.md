@@ -1,6 +1,14 @@
 
 # we_trade - capstone
 
+## Command to Run the Pipeline
+
+```bash
+cd sprint-04-analytics-etl
+pip install -e .
+python -m analytics_etl.extractTransformLoad.pipeline
+```
+
 ## Symbol Universe
 
 The five symbols were selected to provide a diverse and analytically useful dataset covering both Indian and US equity markets.
@@ -21,3 +29,4 @@ Apple was selected as a major US technology company with extensive historical ma
 NVIDIA was selected to represent the US semiconductor and artificial-intelligence sector. Its business differs from Apple's despite both being technology-related companies, providing an interesting comparison of price movements, trading volume and volatility within the US market.
 
 **Overall, these five symbols were chosen because they provide coverage of two markets, multiple sectors and established, actively traded companies. This makes the dataset suitable for analysing daily returns, trading volume, traded value, price ranges, price performance and differences between Indian and US equities.**
+
